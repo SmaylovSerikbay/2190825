@@ -43,5 +43,5 @@ workflows:
 
     publishing:
       app_store_connect:
-        # Это имя ключа, который вы добавили в Codemagic UI (Integrations)
-        api_key: Codemagic
+        api_key: App Test   # <--- Вот сюда вставьте название
+        submit_to_testflight: true
