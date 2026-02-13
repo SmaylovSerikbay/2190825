@@ -71,8 +71,9 @@ workflows:
 
     publishing:
       app_store_connect:
-        # Codemagic найдет все данные (Key ID, Issuer ID) сам через эту интеграцию
-        api_key: "App Test" 
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         submit_to_testflight: true
 
       email:
