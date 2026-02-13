@@ -15,7 +15,7 @@ workflows:
       ios_signing:
         distribution_type: app_store
         # Этот идентификатор должен быть такими же в Unity/Apple
-        bundle_identifier: "Comeback.uz.Lemala.ComeBack"
+        bundle_identifier: "Comeback.uz.Lemala.ComeBackUZ"
 
       vars:
         # Путь к Unity iOS выходной папке
@@ -42,8 +42,7 @@ workflows:
 
       - name: Fetch signing certificates & profiles
         script: |
-          # Добавляем флаг --create для автоматической генерации профиля
-          app-store-connect fetch-signing-files "ios" --type IOS_APP_STORE --create --allow-managed
+          app-store-connect fetch-signing-files "$UNITY_IOS_DIR" --type IOS_APP_STORE --create
 
       - name: Add certificates to keychain
         script: |

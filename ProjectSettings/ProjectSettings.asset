@@ -167,7 +167,7 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: com.Lemala.ComeBack
-    iPhone: Comeback.uz.Lemala.ComeBack
+    iPhone: Comeback.uz.Lemala.ComeBackUZ
   buildNumber:
     Standalone: 0
     VisionOS: 0
