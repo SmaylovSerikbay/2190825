@@ -41,6 +41,8 @@ workflows:
 
     publishing:
       app_store_connect:
-        # Убедитесь, что ключ в Integrations называется именно так
-        api_key: "App Test"
+        # Теперь мы берем данные из переменных, которые вы создали
+        key_id: $APP_STORE_KEY_ID
+        issuer_id: $APP_STORE_ISSUER_ID
+        private_key: $APP_STORE_PRIVATE_KEY
         submit_to_testflight: true
