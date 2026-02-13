@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "408913366077",
+    "firebase_url": "https://comeback-2a6b2-default-rtdb.firebaseio.com",
+    "project_id": "comeback-2a6b2",
+    "storage_bucket": "comeback-2a6b2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408913366077:android:c19a16e88225594e76ae54",
+        "android_client_info": {
+          "package_name": "com.Lemala.ComeBack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDZpv_dawUFapAtYY4TD2sxzUFAA2IiZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
