@@ -9,13 +9,13 @@ workflows:
         XCODE_PROJECT_PATH: "ios"
       ios_signing:
         distribution_type: app_store
-        # ВАЖНО: Впишите сюда ваш реальный Bundle ID (например com.avrgroup.astra)
+        # ВАЖНО: Впишите сюда ваш реальный Bundle ID из Unity!
         bundle_identifier: com.ваш.реальный.id
     scripts:
       - name: Activate Unity License
         script: | 
           if [ -z "$UNITY_LICENSE" ]; then
-            echo "Unity License not found!"
+            echo "Error: UNITY_LICENSE variable is missing in Codemagic UI!"
             exit 1
           fi
           echo "$UNITY_LICENSE" > "Unity_v5.x.ulf"
@@ -41,8 +41,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        # Теперь мы берем данные из переменных, которые вы создали
-        key_id: $APP_STORE_KEY_ID
-        issuer_id: $APP_STORE_ISSUER_ID
-        private_key: $APP_STORE_PRIVATE_KEY
+        # Используем имя ключа, которое мы видели на скриншоте
+        api_key: "App Test"
         submit_to_testflight: true
