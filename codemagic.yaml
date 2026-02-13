@@ -9,8 +9,8 @@ workflows:
         XCODE_PROJECT_PATH: "ios"
       ios_signing:
         distribution_type: app_store
-        # ВНИМАНИЕ: Замените на ваш реальный ID из Unity (например: com.avrgroupllp.astra)
-        bundle_identifier: com.ваш.реальный.id 
+        # ВАЖНО: Впишите сюда ваш реальный ID (например com.avrgroup.astra)
+        bundle_identifier: com.ваш.реальный.id
     scripts:
       - name: Activate Unity License
         script: | 
@@ -40,6 +40,7 @@ workflows:
 
     publishing:
       app_store_connect:
-        # Имя ключа обязательно в кавычках, если есть пробел!
-        api_key: "App Test"
+        key_id: $APP_STORE_KEY_ID
+        issuer_id: $APP_STORE_ISSUER_ID
+        private_key: $APP_STORE_PRIVATE_KEY
         submit_to_testflight: true
