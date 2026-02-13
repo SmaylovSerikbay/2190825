@@ -1,0 +1,47 @@
+workflows:
+  ios-release:
+    name: iOS Release Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      vars:
+        # Укажите вашу версию Unity (посмотрите в Unity Hub)
+        UNITY_VERSION: 2022.3.10f1 
+        # Папка, куда Unity положит Xcode проект (совпадает с BuildScript.cs)
+        XCODE_PROJECT_PATH: "ios"
+      ios_signing:
+        distribution_type: app_store
+        # ВАЖНО: Это должно совпадать с Bundle ID в Project Settings в Unity
+        bundle_identifier: com.ваш.bundle.id 
+    scripts:
+      - name: Activate Unity License
+        script: | 
+          # Активация лицензии (требует переменных окружения в настройках Codemagic)
+          $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile - \
+            -serial ${UNITY_SERIAL} \
+            -username ${UNITY_EMAIL} \
+            -password ${UNITY_PASSWORD}
+      
+      - name: Build Unity to Xcode
+        script: | 
+          # Запуск сборки через созданный нами BuildScript
+          $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile - \
+            -projectPath . \
+            -executeMethod BuildScript.BuildIOS \
+            -nographics
+            
+      - name: Build IPA from Xcode
+        script: | 
+          # Сборка финального файла .ipa
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT_PATH/Unity-iPhone.xcodeproj" \
+            --scheme "Unity-iPhone"
+
+    artifacts:
+      - build/ios/*.ipa
+      - $XCODE_PROJECT_PATH/*.ipa
+
+    publishing:
+      app_store_connect:
+        # Это имя ключа, который вы добавили в Codemagic UI (Integrations)
+        api_key: Codemagic
