@@ -15,7 +15,7 @@ workflows:
       ios_signing:
         distribution_type: app_store
         # Этот идентификатор должен быть такими же в Unity/Apple
-        bundle_identifier: "com.Lemalaa.ComeBackapp"
+        bundle_identifier: "Comeback.uz.Lemala.ComeBack"
 
       vars:
         # Путь к Unity iOS выходной папке
