@@ -9,15 +9,16 @@ workflows:
         XCODE_PROJECT_PATH: "ios"
       ios_signing:
         distribution_type: app_store
-        # ВАЖНО: Впишите сюда ваш реальный ID (например com.avrgroup.astra)
+        # ВАЖНО: Впишите сюда ваш реальный Bundle ID (например com.avrgroup.astra)
         bundle_identifier: com.ваш.реальный.id
     scripts:
       - name: Activate Unity License
         script: | 
-          # Создаем файл лицензии из переменной (для Personal версии)
+          if [ -z "$UNITY_LICENSE" ]; then
+            echo "Unity License not found!"
+            exit 1
+          fi
           echo "$UNITY_LICENSE" > "Unity_v5.x.ulf"
-          
-          # Активируем лицензию
           $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile - \
             -manualLicenseFile Unity_v5.x.ulf || exit 0
       
@@ -40,7 +41,6 @@ workflows:
 
     publishing:
       app_store_connect:
-        key_id: $APP_STORE_KEY_ID
-        issuer_id: $APP_STORE_ISSUER_ID
-        private_key: $APP_STORE_PRIVATE_KEY
+        # Убедитесь, что ключ в Integrations называется именно так
+        api_key: "App Test"
         submit_to_testflight: true
