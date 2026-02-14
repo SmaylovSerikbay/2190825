@@ -11,7 +11,7 @@ workflows:
     environment:
       # Подключаем группу переменных (ключи, сертификаты и т.п.)
       groups:
-        - ios_credentials
+        - ios
       ios_signing:
         distribution_type: app_store
         # Этот идентификатор должен быть такими же в Unity/Apple
