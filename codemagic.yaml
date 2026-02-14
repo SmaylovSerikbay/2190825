@@ -38,7 +38,11 @@ workflows:
 
       - name: Fetch signing certificates & profiles
         script: |
-          app-store-connect fetch-signing-files "Comeback.uz.Lemala.ComeBack" --type IOS_APP_STORE --create
+          # Мы добавляем --generate-content для создания недостающего сертификата
+          app-store-connect fetch-signing-files "Comeback.uz.Lemala.ComeBack" \
+            --type IOS_APP_STORE \
+            --create \
+            --generate-content
 
       - name: Add certificates to keychain
         script: |
