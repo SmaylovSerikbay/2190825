@@ -69,6 +69,14 @@ workflows:
         script: |
           $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -returnlicense -logFile -
         ignore_failure: true # Чтобы билд не падал, если лицензия уже деактивирована
+      
+      - name: Fetch signing certificates & profiles
+        script: |
+          # Флаг --generate-content создаст новый сертификат, если старый ключ не найден
+          app-store-connect fetch-signing-files "Comeback.uz.Lemala.ComeBack" \
+            --type IOS_APP_STORE \
+            --create \
+            --generate-content
 
     artifacts:
       - ios/build/ios/ipa/*.ipa
