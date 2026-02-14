@@ -7,10 +7,11 @@ workflows:
     # Интеграция не используется — credentials через переменные в группе ios
     environment:
       groups:
-        - ios # Добавьте: CERTIFICATE_PRIVATE_KEY, APP_STORE_CONNECT_PRIVATE_KEY, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID
+        - ios # CERTIFICATE_PRIVATE_KEY, APP_STORE_CONNECT_*, etc.
+        - unity_credentials # UNITY_SERIAL, UNITY_EMAIL, UNITY_PASSWORD
       
-      # Убрано ios_signing — используем app-store-connect fetch-signing-files
-      # (Code signing identities требует загруженный сертификат, совпадающий с профилем)
+      # Устанавливает Unity 6000.3.7f1 и задаёт UNITY_HOME
+      unity: 6000.3.7f1
 
       vars:
         BUNDLE_ID: "Comeback.uz.Lemala.ComeBack"
@@ -62,16 +63,18 @@ workflows:
           cd $UNITY_IOS_DIR
           xcode-project build-ipa --project "$XCODE_PROJECT" --scheme "$XCODE_SCHEME"
 
-      - name: Deactivate Unity license
-        script: |
-          $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -returnlicense -logFile -
-        ignore_failure: true # Чтобы билд не падал, если лицензия уже деактивирована
-
     artifacts:
       - ios/build/ios/ipa/*.ipa
       - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
 
     publishing:
+      scripts:
+        - name: Deactivate Unity license
+          script: |
+            $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile - -returnlicense \
+              -username ${UNITY_EMAIL} -password ${UNITY_PASSWORD}
+          ignore_failure: true
+
       app_store_connect:
         api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
