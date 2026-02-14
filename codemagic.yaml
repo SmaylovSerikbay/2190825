@@ -4,36 +4,35 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
 
-    # Подключаем App Store Connect интеграцию
+    # Интеграция с App Store Connect (используем имя вашей настройки)
     integrations:
       app_store_connect: ios_credentials
 
     environment:
-      # Подключаем группу переменных (ключи, сертификаты и т.п.)
       groups:
-        - ios
+        - ios # Исправлено: имя группы из ваших настроек Codemagic
+      
       ios_signing:
         distribution_type: app_store
-        # Этот идентификатор должен быть такими же в Unity/Apple
-        bundle_identifier: "Comeback.uz.Lemala.ComeBackUZ"
+        bundle_identifier: "Comeback.uz.Lemala.ComeBack" # Исправлено: убрано лишнее "UZ"
 
       vars:
-        # Путь к Unity iOS выходной папке
-        UNITY_IOS_DIR: ios
+        UNITY_IOS_DIR: "ios"
         XCODE_PROJECT: "Unity-iPhone.xcodeproj"
         XCODE_SCHEME: "Unity-iPhone"
-        APP_STORE_APPLE_ID: 1570610860
+        APP_STORE_APPLE_ID: 6751400452 # Исправлено: актуальный ID из App Store Connect
 
     scripts:
       - name: Activate Unity license
         script: |
-          # activate Unity (Serial+Email+Password из переменных)
+          # Активация Unity. Убедитесь, что UNITY_SERIAL, UNITY_EMAIL, UNITY_PASSWORD в группе 'ios'
           $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile - \
             -serial ${UNITY_SERIAL} -username ${UNITY_EMAIL} -password ${UNITY_PASSWORD}
 
       - name: Generate Xcode project
         script: |
-          $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile \
+          # Запуск вашего C# скрипта для генерации проекта
+          $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile - \
             -projectPath . -executeMethod BuildScript.BuildIos -nographics
 
       - name: Set up keychain for codesigning
@@ -42,7 +41,8 @@ workflows:
 
       - name: Fetch signing certificates & profiles
         script: |
-          app-store-connect fetch-signing-files "$UNITY_IOS_DIR" --type IOS_APP_STORE --create
+          # Используем точный Bundle ID для получения профиля
+          app-store-connect fetch-signing-files "Comeback.uz.Lemala.ComeBack" --type IOS_APP_STORE --create
 
       - name: Add certificates to keychain
         script: |
@@ -50,19 +50,28 @@ workflows:
 
       - name: Configure signing profiles
         script: |
+          # Применяем профили к сгенерированному проекту
           cd $UNITY_IOS_DIR
           xcode-project use-profiles
 
       - name: Set build number
         script: |
-          BUILD_NUMBER=$(($(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID") + 1))
+          # Автоматически увеличиваем номер сборки на основе данных App Store
+          LATEST_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+          BUILD_NUMBER=$((LATEST_BUILD + 1))
           cd $UNITY_IOS_DIR
           agvtool new-version -all $BUILD_NUMBER
 
       - name: Build .ipa
         script: |
+          # Собираем финальный архив для отправки
           cd $UNITY_IOS_DIR
           xcode-project build-ipa --project "$XCODE_PROJECT" --scheme "$XCODE_SCHEME"
+
+      - name: Deactivate Unity license
+        script: |
+          $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -returnlicense -logFile -
+        active: always
 
     artifacts:
       - ios/build/ios/ipa/*.ipa
@@ -70,14 +79,13 @@ workflows:
 
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        # Codemagic возьмет ключи из группы 'ios', так как имена совпадают со стандартами
+        auth: integration
         submit_to_testflight: true
 
       email:
         recipients:
-          - youremail@example.com
+          - youremail@example.com # Замените на вашу почту
         notify:
           success: true
           failure: true
