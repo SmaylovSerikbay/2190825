@@ -16,6 +16,10 @@
 *.blend1
 *.blend1.meta
 
+# iOS signing - НЕ коммитить приватные ключи!
+ios_distribution_private_key
+ios_distribution_private_key.pub
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/
