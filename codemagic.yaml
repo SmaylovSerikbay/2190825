@@ -29,7 +29,7 @@ workflows:
       - name: Generate Xcode project
         script: |
           $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -logFile - \
-            -projectPath . -executeMethod BuildScript.BuildIos -nographics
+            -projectPath . -executeMethod BuildScript.BuildIOS -nographics
 
       - name: Set up keychain for codesigning
         script: |
