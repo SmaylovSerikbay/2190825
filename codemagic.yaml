@@ -9,13 +9,13 @@ workflows:
 
     environment:
       groups:
-        - ios # Имя группы из ваших настроек
+        - ios # Имя группы: добавьте CERTIFICATE_PRIVATE_KEY (приватный ключ RSA сертификата)
       
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: "Comeback.uz.Lemala.ComeBack" # Исправленный ID
+      # Убрано ios_signing — используем app-store-connect fetch-signing-files
+      # (Code signing identities требует загруженный сертификат, совпадающий с профилем)
 
       vars:
+        BUNDLE_ID: "Comeback.uz.Lemala.ComeBack"
         UNITY_IOS_DIR: "ios"
         XCODE_PROJECT: "Unity-iPhone.xcodeproj"
         XCODE_SCHEME: "Unity-iPhone"
@@ -38,11 +38,10 @@ workflows:
 
       - name: Fetch signing certificates & profiles
         script: |
-          # Мы добавляем --generate-content для создания недостающего сертификата
-          app-store-connect fetch-signing-files "Comeback.uz.Lemala.ComeBack" \
+          # Требуется CERTIFICATE_PRIVATE_KEY в группе ios (приватный ключ RSA)
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
-            --create \
-            --generate-content
+            --create
 
       - name: Add certificates to keychain
         script: |
@@ -69,14 +68,6 @@ workflows:
         script: |
           $UNITY_HOME/Contents/MacOS/Unity -batchmode -quit -returnlicense -logFile -
         ignore_failure: true # Чтобы билд не падал, если лицензия уже деактивирована
-      
-      - name: Fetch signing certificates & profiles
-        script: |
-          # Флаг --generate-content создаст новый сертификат, если старый ключ не найден
-          app-store-connect fetch-signing-files "Comeback.uz.Lemala.ComeBack" \
-            --type IOS_APP_STORE \
-            --create \
-            --generate-content
 
     artifacts:
       - ios/build/ios/ipa/*.ipa
