@@ -17,6 +17,7 @@ workflows:
         BUNDLE_ID: "Comeback.uz.Lemala.ComeBack"
         UNITY_IOS_DIR: "ios"
         XCODE_PROJECT: "Unity-iPhone.xcodeproj"
+        XCODE_WORKSPACE: "Unity-iPhone.xcworkspace"
         XCODE_SCHEME: "Unity-iPhone"
         APP_STORE_APPLE_ID: 6751400452 # ID из App Store Connect
 
@@ -51,6 +52,11 @@ workflows:
           cd $UNITY_IOS_DIR
           xcode-project use-profiles --project "$XCODE_PROJECT" --archive-method app-store
 
+      - name: Install CocoaPods dependencies
+        script: |
+          cd $UNITY_IOS_DIR
+          pod install
+
       - name: Set build number
         script: |
           LATEST_BUILD=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
@@ -61,7 +67,7 @@ workflows:
       - name: Build .ipa
         script: |
           cd $UNITY_IOS_DIR
-          xcode-project build-ipa --project "$XCODE_PROJECT" --scheme "$XCODE_SCHEME"
+          xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
 
     artifacts:
       - ios/build/ios/ipa/*.ipa
